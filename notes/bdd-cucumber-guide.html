@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDD & Cucumber JS — Reference Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --bg:       #F7F8FA;
+    --surface:  #FFFFFF;
+    --border:   #E4E7ED;
+    --text:     #1A1D23;
+    --muted:    #6B7280;
+    --faint:    #9CA3AF;
+
+    --blue:     #2563EB;
+    --blue-bg:  #EFF6FF;
+    --blue-bd:  #BFDBFE;
+
+    --green:    #16A34A;
+    --green-bg: #F0FDF4;
+    --green-bd: #BBF7D0;
+
+    --amber:    #D97706;
+    --amber-bg: #FFFBEB;
+    --amber-bd: #FDE68A;
+
+    --purple:   #7C3AED;
+    --purple-bg:#F5F3FF;
+    --purple-bd:#DDD6FE;
+
+    --coral:    #DC2626;
+    --coral-bg: #FEF2F2;
+    --coral-bd: #FECACA;
+
+    --teal:     #0D9488;
+    --teal-bg:  #F0FDFA;
+    --teal-bd:  #99F6E4;
+
+    --radius:   10px;
+    --radius-sm:6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── Layout ── */
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── Header ── */
+  header {
+    margin-bottom: 48px;
+    padding-bottom: 28px;
+    border-bottom: 1.5px solid var(--border);
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+
+  .icon-badge {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563EB, #7C3AED);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    color: var(--text);
+  }
+
+  header p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 560px;
+  }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 44px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .card + .card { margin-top: 10px; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 580px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .card-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .callout {
+    background: var(--blue-bg);
+    border: 1px solid var(--blue-bd);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #1E40AF;
+    margin-top: 12px;
+  }
+
+  /* ── Gherkin keywords ── */
+  .kw-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .kw-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kw-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .kw-card.given::before { background: var(--blue); }
+  .kw-card.when::before  { background: var(--amber); }
+  .kw-card.then::before  { background: var(--green); }
+  .kw-card.and::before   { background: var(--purple); }
+  .kw-card.but::before   { background: var(--coral); }
+  .kw-card.feature::before { background: var(--teal); }
+  .kw-card.scenario::before { background: #6B7280; }
+
+  .kw-name {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .kw-card.given .kw-name  { color: var(--blue); }
+  .kw-card.when .kw-name   { color: var(--amber); }
+  .kw-card.then .kw-name   { color: var(--green); }
+  .kw-card.and .kw-name    { color: var(--purple); }
+  .kw-card.but .kw-name    { color: var(--coral); }
+  .kw-card.feature .kw-name  { color: var(--teal); }
+  .kw-card.scenario .kw-name { color: var(--muted); }
+
+  .kw-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── Folder tree ── */
+  .tree {
+    background: #1E2130;
+    color: #C9D1D9;
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 2;
+    overflow-x: auto;
+  }
+
+  .tree .dir  { color: #79C0FF; }
+  .tree .file { color: #A5D6FF; }
+  .tree .cmt  { color: #6E7681; font-style: italic; }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: #1E2130;
+    color: #C9D1D9;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .code-block .kw    { color: #FF7B72; }
+  .code-block .str   { color: #A5D6FF; }
+  .code-block .fn    { color: #D2A8FF; }
+  .code-block .cmt   { color: #6E7681; font-style: italic; }
+  .code-block .tag   { color: #79C0FF; }
+
+  /* ── CLI Commands ── */
+  .cmd-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .cmd-label {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--faint);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cmd-line {
+    padding: 12px 14px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cmd-prompt {
+    color: var(--blue);
+    font-weight: 500;
+    user-select: none;
+  }
+
+  /* ── Tags ── */
+  .tag-chip {
+    display: inline-block;
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 5px;
+    margin: 3px 3px 3px 0;
+  }
+
+  .tag-chip.blue   { background: var(--blue-bg);   color: var(--blue);   border: 1px solid var(--blue-bd); }
+  .tag-chip.green  { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-bd); }
+  .tag-chip.amber  { background: var(--amber-bg);  color: var(--amber);  border: 1px solid var(--amber-bd); }
+
+  /* ── Flags table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover { background: #FAFAFA; }
+
+  td code, p code, li code, .card-body code {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--blue);
+  }
+
+  td:first-child { font-weight: 500; color: var(--text); }
+
+  /* ── Steps list ── */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .step-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--blue-bg);
+    color: var(--blue);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .step-text strong { font-weight: 600; }
+
+  /* ── Section icon colors ── */
+  .si-blue   { background: var(--blue-bg);   }
+  .si-green  { background: var(--green-bg);  }
+  .si-amber  { background: var(--amber-bg);  }
+  .si-purple { background: var(--purple-bg); }
+  .si-teal   { background: var(--teal-bg);   }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 40px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <div class="icon-badge">🥒</div>
+      <h1>BDD &amp; Cucumber JS</h1>
+    </div>
+    <p>A complete reference guide for Behavior Driven Development with Cucumber JS and Playwright — from setup to running tests.</p>
+    <div class="pill-row">
+      <span class="pill">Node.js</span>
+      <span class="pill">Playwright</span>
+      <span class="pill">@cucumber/cucumber</span>
+      <span class="pill">Gherkin</span>
+      <span class="pill">VS Code</span>
+    </div>
+  </header>
+
+  <!-- 1. What is BDD & Cucumber -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-blue">💡</div>
+      <div class="section-title">What is BDD &amp; Cucumber?</div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">BDD — Behavior Driven Development</div>
+        <div class="card-body">
+          Tests written in plain English that <strong>everyone can understand</strong> — developers, testers, and business people.
+          <br><br>
+          Tests describe the <em>behavior</em> of the app, not the code. Written <strong>before coding starts</strong> to bridge the gap between technical and non-technical teams.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Cucumber JS</div>
+        <div class="card-body">
+          A BDD framework that reads plain English test scenarios and executes them as automated tests.
+          <br><br>
+          Your existing Playwright framework can be converted to BDD by adding the <code>@cucumber/cucumber</code> package and writing <code>.feature</code> files.
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      💬 <strong>In short:</strong> BDD is the <em>approach</em> — Cucumber is the <em>tool</em> that implements it.
+    </div>
+  </div>
+
+  <!-- 2. Setup -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-teal">⚙️</div>
+      <div class="section-title">Setup &amp; Configuration</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Prerequisites</div>
+      <div class="card-body">Make sure these are installed before starting:</div>
+      <div style="margin-top:10px">
+        <span class="tag-chip blue">Node.js</span>
+        <span class="tag-chip blue">npm</span>
+        <span class="tag-chip blue">npx</span>
+        <span class="tag-chip blue">Playwright</span>
+      </div>
+    </div>
+    <div class="card" style="margin-top:10px">
+      <div class="card-title">Install Cucumber JS</div>
+      <div class="code-block"><span class="kw">npm</span> install @cucumber/cucumber</div>
+    </div>
+    <div class="card" style="margin-top:10px">
+      <div class="card-title">VS Code Extension</div>
+      <div class="card-body">Install <strong>Cucumber (Gherkin) Full Support</strong> from the VS Code Extensions Marketplace for syntax highlighting and step navigation.</div>
+    </div>
+  </div>
+
+  <!-- 3. Gherkin Keywords -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-purple">🗝️</div>
+      <div class="section-title">Gherkin Keywords</div>
+    </div>
+    <div class="kw-grid">
+      <div class="kw-card feature">
+        <div class="kw-name">Feature</div>
+        <div class="kw-desc">Describes the feature being tested — acts as the test suite</div>
+      </div>
+      <div class="kw-card scenario">
+        <div class="kw-name">Scenario</div>
+        <div class="kw-desc">Represents one individual test case</div>
+      </div>
+      <div class="kw-card given">
+        <div class="kw-name">Given</div>
+        <div class="kw-desc">Pre-condition / setup before the test</div>
+      </div>
+      <div class="kw-card when">
+        <div class="kw-name">When</div>
+        <div class="kw-desc">Action performed by the user or system</div>
+      </div>
+      <div class="kw-card then">
+        <div class="kw-name">Then</div>
+        <div class="kw-desc">Expected result / validation outcome</div>
+      </div>
+      <div class="kw-card and">
+        <div class="kw-name">And</div>
+        <div class="kw-desc">Continues Given / When / Then for multiple steps</div>
+      </div>
+      <div class="kw-card but">
+        <div class="kw-name">But</div>
+        <div class="kw-desc">Negative continuation of a step</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Folder Structure -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-amber">📁</div>
+      <div class="section-title">Folder Structure</div>
+    </div>
+    <div class="tree">
+<span class="dir">project/</span>
+│
+├── <span class="dir">features/</span>              <span class="cmt"># test suites (.feature files)</span>
+│   ├── <span class="file">login.feature</span>
+│   ├── <span class="file">dashboard.feature</span>
+│   │
+│   ├── <span class="dir">step_definitions/</span>    <span class="cmt"># step implementation</span>
+│   │   ├── <span class="file">login.steps.js</span>
+│   │   └── <span class="file">dashboard.steps.js</span>
+│   │
+│   └── <span class="dir">support/</span>              <span class="cmt"># hooks and world setup</span>
+│       ├── <span class="file">hooks.js</span>
+│       └── <span class="file">world.js</span>
+│
+├── <span class="dir">pages/</span>                   <span class="cmt"># page object models</span>
+│   ├── <span class="file">LoginPage.js</span>
+│   └── <span class="file">DashboardPage.js</span>
+│
+├── <span class="dir">reports/</span>                 <span class="cmt"># test output reports</span>
+│
+├── <span class="file">cucumber.js</span>              <span class="cmt"># cucumber configuration</span>
+└── <span class="file">package.json</span></div>
+  </div>
+
+  <!-- 5. Step Definitions -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-green">🔗</div>
+      <div class="section-title">Step Definitions</div>
+    </div>
+    <div class="card">
+      <div class="card-title">How to get step stubs</div>
+      <div class="card-body">Run <code>npx cucumber-js</code> and Cucumber will output the missing step definitions. Copy them into a file under <code>features/support/</code> (e.g. <code>login.js</code>).</div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="card-body" style="margin-bottom:8px;font-size:13px;color:var(--muted)">1. Add this import at the very top of your file:</div>
+      <div class="code-block"><span class="kw">import</span> { <span class="fn">Given</span>, <span class="fn">When</span>, <span class="fn">Then</span> } <span class="kw">from</span> <span class="str">"@cucumber/cucumber"</span>;</div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="card-body" style="margin-bottom:8px;font-size:13px;color:var(--muted)">2. Paste the generated step stubs and fill in the automation code:</div>
+      <div class="code-block"><span class="fn">Given</span>(<span class="str">'User is in login page of Application'</span>, <span class="kw">function</span> () {
+  <span class="cmt">// Write code that navigates to the login page</span>
+  <span class="kw">return</span> <span class="str">'pending'</span>;
+});
+
+<span class="fn">When</span>(<span class="str">'User Enter valid User id and valid password'</span>, <span class="kw">function</span> () {
+  <span class="cmt">// Write code to fill in credentials</span>
+  <span class="kw">return</span> <span class="str">'pending'</span>;
+});
+
+<span class="fn">When</span>(<span class="str">'Click on login button'</span>, <span class="kw">function</span> () {
+  <span class="cmt">// Write code to click the login button</span>
+  <span class="kw">return</span> <span class="str">'pending'</span>;
+});</div>
+    </div>
+  </div>
+
+  <!-- 6. CLI Commands -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-blue">💻</div>
+      <div class="section-title">CLI Commands</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Run all tests</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Run a specific feature file</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js features/login.feature</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Load step definitions from a path</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --require features/step_definitions/**/*.js</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Run by tag</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --tags "@login"</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Tag — AND condition</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --tags "@smoke and @login"</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Tag — OR condition</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --tags "@smoke or @regression"</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Tag — NOT condition</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --tags "not @wip"</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Dry run — check for missing step definitions</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js --dry-run</div>
+    </div>
+
+    <div class="cmd-block">
+      <div class="cmd-label">Run a specific feature folder</div>
+      <div class="cmd-line"><span class="cmd-prompt">$</span> npx cucumber-js features1/</div>
+    </div>
+  </div>
+
+  <!-- 7. Flags Reference -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-amber">🚩</div>
+      <div class="section-title">Cucumber Flags Reference</div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Flag</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>features</code></td>
+          <td>Path to the feature folder containing <code>.feature</code> files</td>
+        </tr>
+        <tr>
+          <td><code>--require</code></td>
+          <td>Path of step definitions (glue code) — tells Cucumber where to find them</td>
+        </tr>
+        <tr>
+          <td><code>--dry-run</code></td>
+          <td>Checks whether all steps have matching step definitions — lists missing ones without actually running tests</td>
+        </tr>
+        <tr>
+          <td><code>--tags</code></td>
+          <td>Run selective tests by tag. Supports <code>and</code>, <code>or</code>, and <code>not</code> logic</td>
+        </tr>
+        <tr>
+          <td><code>--format</code></td>
+          <td>Generate reports in different formats: <code>json</code>, <code>xml</code>, <code>html</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. How Cucumber Runs -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon si-green">▶️</div>
+      <div class="section-title">How Cucumber Executes Tests</div>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">Scans the <strong>features/</strong> folder and picks up all <code>.feature</code> files</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">Reads each <strong>scenario</strong> one by one — each scenario is an independent test case</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">For each step (Given / When / Then), it looks up the matching <strong>step definition</strong> in the support folder</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">Executes the step definitions sequentially, reporting <strong>pass</strong>, <strong>fail</strong>, or <strong>pending</strong> for each step</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="text-align:center;font-size:13px;color:var(--faint)">BDD &amp; Cucumber JS Reference Guide &nbsp;·&nbsp; Generated with Claude</div>
+
+</div>
+
+</body>
+</html>
