@@ -21,4 +21,22 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            allure(
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'allure-results']]
+            )
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'reports',
+                reportFiles: 'cucumber-report.html',
+                reportName: 'Cucumber HTML Report'
+            ])
+        }
+    }
 }

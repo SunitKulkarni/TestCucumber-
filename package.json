@@ -11,6 +11,8 @@
   "devDependencies": {
     "@cucumber/cucumber": "^13.0.0",
     "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.2"
+    "@types/node": "^25.9.2",
+    "allure-commandline": "^2.42.1",
+    "allure-cucumberjs": "^3.10.0"
   }
 }
