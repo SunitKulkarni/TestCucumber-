@@ -1,6 +1,6 @@
 Feature: Login Functionality
 
-Scenario: Login with Inavlid Valid Credentials
+Scenario: Login with Inavlid  Credentials
     Feature Description
     Given User is in login page of Application
     When User Enter Invalid  User id and Invalid password

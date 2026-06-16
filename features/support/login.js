@@ -43,6 +43,15 @@ When('Click on login button', async function () {
   return 'pending';
   */
 //});
+Then('User should get error message', async function () {
+
+    await this.page.waitForTimeout(2000);
+
+    const text = await this.page.locator('body').textContent();
+
+    console.log(text);
+
+});
 When('User Enter valid User id and valid password', async function () {
     await this.page.locator('input[name="username"]').fill('john');
     await this.page.locator('input[name="password"]').fill('demo');
@@ -56,6 +65,15 @@ Then('User should be able to see Account overview Page', async function () {
 When('User Enter valid User id and Blank password', async function () {
   await this.page.locator('input[name="username"]').fill('john');
     await this.page.locator('input[name="password"]').fill('');
+});
+Then('User should get error message', async function () {
+
+    await this.page.waitForTimeout(2000);
+
+    const text = await this.page.locator('body').textContent();
+
+    console.log(text);
+
 });
 
 When('User Enter BLANK User id and valid password', async function () {
